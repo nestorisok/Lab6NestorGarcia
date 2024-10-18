@@ -9,46 +9,51 @@
 
 using namespace std;
 
-vector<string> myList, myList2; // Values
+vector<string> myValues, myList2; // Values
 unordered_map<string, vector<string> > myMap; // <key, values> // Key is amino acids, values is list of values
 
 ifstream myFi("Prog4-data");
-string line;
+string curLine;
+
 
 int main(void)
 {
 	// Input stream
-	while (getline(myFi, line))
+	while (!myFi.eof())
 	{
-
-		myList.push_back(line);
-
-		getline(myFi, line);
-
-		if (myMap.find(line) != myMap.end())
+		while (getline(myFi, curLine)) // Gets first line file
 		{
-			for (int i = 0; i < myList.size(); i++)
+
+			myValues.push_back(curLine); // value is added to list 
+
+			getline(myFi, curLine);
+
+			if (myMap.find(curLine) != myMap.end())
 			{
-				myMap[line].push_back(myList[i]); // Increments count for vector size
+				for (int i = 0; i < myValues.size(); i++)
+				{
+					myMap[curLine].push_back(myValues[i]); // Increments count for vector size
+				}
 			}
+			else
+			{
+				myMap[curLine].push_back(myValues[0]);
+			}
+			myValues.clear();
 		}
-		else
-		{
-			myMap[line].push_back(myList[0]);
-		}
-		myList.clear();
 	}
 	myFi.close();
 
 
 	for (auto itr = myMap.begin(); itr != myMap.end(); itr++)
 	{
+		string cma = "";
+
 		for (const auto& labels: itr->second)
 		{
-			cout << labels << ", ";
-
+			cout << cma << labels;
+			cma = ", ";
 		}
-		cout << "\b";
 		cout << "\n" << itr->first << endl;
 	}
 
@@ -58,10 +63,12 @@ int main(void)
 	for (auto itr = myMap.begin(); itr != myMap.end(); itr++)
 	{
 	
+		string cma = "";
+
 		for (const auto& labels : itr->second)
 		{
-			outFi << labels << ", ";
-
+			outFi << cma << labels;
+			cma = ", ";
 		}
 		outFi << "\n" << itr->first << endl;
 	}
